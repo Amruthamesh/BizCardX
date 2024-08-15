@@ -22,7 +22,7 @@ Clone the Repository
 
 bash
 Copy code
-git clone https://github.com/yourusername/bizcardx.git
+git clone  (https://github.com/Amruthamesh/BizCardX)
 cd bizcardx
 Create a Virtual Environment
 
