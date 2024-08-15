@@ -72,7 +72,7 @@ else:
     mydb = psycopg2.connect(
         host="localhost",
         user="postgres",
-        password="Amrutha",
+        password="****",
         database="bizcard",
         port="5432"
     )
@@ -204,7 +204,7 @@ else:
                                 card = re.sub(mail_pattern, '', card)
 
                                 # Extract website
-                                url_pattern = r"www\.[A-Za-z0-9]+\.[A-Z|a-z]{2,3}"
+                                url_pattern = r"www\.[A-Za-z0-9]+\.[A-Za-z]{2,3}"
                                 url = re.findall(url_pattern, card)
                                 URL = ' '.join(url)
                                 card = re.sub(url_pattern, '', card)
@@ -245,14 +245,10 @@ else:
                                 st.markdown(f'**State:** {state}')
 
                                 # Upload to database
-                                if st.button('UPLOAD'):
-                                    try:
-                                        mycursor.execute("INSERT INTO card_data (name, designation, company, contact, email, website, address, city, state, pincode, image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                                                         (name, designation, company, Phone, Email_id, URL, address, city, state, Pincode, file_bytes))
-                                        mydb.commit()
-                                        st.success("Uploaded to Database successfully!")
-                                    except Exception as e:
-                                        st.error(f"Error uploading to database: {e}")
+                                mycursor.execute("INSERT INTO card_data (name, designation, company, contact, email, website, address, city, state, pincode, image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                                                 (name, designation, company, Phone, Email_id, URL, address, city, state, Pincode, file_bytes))
+                                mydb.commit()
+                                st.success("Uploaded to Database successfully!")
                         else:
                             st.error("Please upload an image first.")
 
@@ -265,7 +261,7 @@ else:
                 data = mycursor.fetchall()
                 df = pd.DataFrame(data, columns=['ID', 'Name', 'Designation', 'Company', 'Contact', 'Email', 'Website', 'Address', 'City', 'State', 'Pincode', 'Image'])
                 st.dataframe(df)
-
+            
             # Delete records
             st.markdown("### Delete Record")
             record_id = st.number_input("Enter the ID of the record to delete", min_value=1, step=1)
@@ -279,7 +275,7 @@ else:
                         st.error(f"Error deleting record: {e}")
                 else:
                     st.error("Please enter a valid ID to delete.")
-
+            
             # Modify records
             st.markdown("### Modify Record")
             modify_id = st.number_input("Enter the ID of the record to modify", min_value=1, step=1)
@@ -297,9 +293,10 @@ else:
                     city = st.text_input("City", value=record[8])
                     state = st.text_input("State", value=record[9])
                     pincode = st.text_input("Pincode", value=record[10])
-
+                    
                     if st.button('Update Record'):
                         try:
+                            # Update record in the database
                             mycursor.execute("""
                                 UPDATE card_data
                                 SET name = %s, designation = %s, company = %s, contact = %s, email = %s, website = %s, address = %s, city = %s, state = %s, pincode = %s
